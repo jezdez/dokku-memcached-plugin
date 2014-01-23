@@ -21,7 +21,8 @@ if [[ $1 == memcached:* ]]; then
     fi
 
     LINK_NAME="memcached"
-    CONTAINER_NAME="memcached_$APP"
+    CONTAINER_NAME="memcached/$APP"
+    MEMCACHE_PORT=11211
 fi
 
 case "$1" in
@@ -39,10 +40,15 @@ case "$1" in
     if [[ ! -z "$ID" ]]; then
         docker stop $ID > /dev/null
     fi
-
+    
+    # Fork Memcached image
+    ID=$(docker run -d jazdez/memcached exit 0)
+    docker wait $ID > /dev/null
+    IMAGE=$(docker commit $ID)
+    docker tag $IMAGE $CONTAINER_NAME
     # Launch container
-    docker run -name=$CONTAINER_NAME -d jezdez/memcached \
-        /usr/bin/memcached -u memcache -p 11211 -m 64 -l 0.0.0.0
+    docker run -name=$CONTAINER_NAME -p $MEMCACHE_PORT -d $CONTAINER_NAME \
+        /usr/bin/memcached -u memcache -p $MEMCACHE_PORT -m 64 -l 0.0.0.0
 
     # Link to a potential existing app
     dokku memcached:link $APP $APP
@@ -70,9 +76,12 @@ case "$1" in
   memcached:info)
     ID=$(docker ps -a | grep "$CONTAINER_NAME" | awk '{print $1}')
     IP=$(docker inspect $ID | grep IPAddress | cut -d '"' -f 4)
+    DOCKER_GATEWAY=$(docker inspect $ID | grep Gateway | awk '{ print $2 }' | tr -d ',"')
+    PORT=$(docker port $ID $MEMCACHE_PORT | cut -d":" -f2)
     echo
     echo "       Host: ${IP}"
-    echo "       Private port: 11211"
+    echo "       Gateway: ${DOCKER_GATEWAY}"
+    echo "       Port: ${MEMCACHE_PORT} -> ${PORT}"
     echo
     ;;
 
@@ -91,7 +100,8 @@ case "$1" in
         # figure out IP to set env var
         ID=$(docker ps -a | grep "$CONTAINER_NAME" |  awk '{print $1}')
         IP=$(docker inspect $ID | grep IPAddress | cut -d '"' -f 4)
-        dokku config:set "$APP" MEMCACHE_SERVERS="${IP}:11211"
+        DOCKER_GATEWAY=$(docker inspect $ID | grep Gateway | awk '{ print $2 }' | tr -d ',"')
+        dokku config:set "$APP" MEMCACHE_SERVERS="${DOCKER_GATEWAY}:${MEMCACHE_PORT}"
         echo "-----> $APP linked to $CONTAINER_NAME container"
     fi
     ;;
