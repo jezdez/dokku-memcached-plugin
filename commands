@@ -95,9 +95,10 @@ case "$1" in
 
         # figure out IP to set env var
         ID=$(docker ps -a | grep "$CONTAINER_NAME" |  awk '{print $1}')
-        IP=$(docker inspect $ID | grep IPAddress | cut -d '"' -f 4)
+        #IP=$(docker inspect $ID | grep IPAddress | cut -d '"' -f 4)
+        PORT=$(docker port $ID $MEMCACHE_PORT | cut -d":" -f2)
         DOCKER_GATEWAY=$(docker inspect $ID | grep Gateway | awk '{ print $2 }' | tr -d ',"')
-        dokku config:set "$APP" MEMCACHE_SERVERS="${DOCKER_GATEWAY}:${MEMCACHE_PORT}"
+        dokku config:set "$APP" MEMCACHE_SERVERS="${DOCKER_GATEWAY}:${PORT}"
         echo "-----> $APP linked to $CONTAINER_NAME container"
     fi
     ;;
