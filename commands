@@ -36,7 +36,7 @@ case "$1" in
     fi
 
     # Stop existing container with the same persistent Memcached
-    ID=$(docker ps | grep "$CONTAINER_NAME" |  awk '{print $1}')
+    ID=$(docker ps | grep "$CONTAINER_NAME":latest |  awk '{print $1}')
     if [[ ! -z "$ID" ]]; then
         docker stop $ID > /dev/null
     fi
@@ -60,7 +60,7 @@ case "$1" in
 
   memcached:delete)
     # Stop the container
-    ID=$(docker ps -a | grep "$CONTAINER_NAME" |  awk '{print $1}')
+    ID=$(docker ps -a | grep "$CONTAINER_NAME":latest |  awk '{print $1}')
     if [[ ! -z $ID ]]; then
         docker stop $ID > /dev/null
         docker rm $ID  > /dev/null
@@ -74,7 +74,7 @@ case "$1" in
     ;;
 
   memcached:info)
-    ID=$(docker ps -a | grep "$CONTAINER_NAME" | awk '{print $1}')
+    ID=$(docker ps -a | grep "$CONTAINER_NAME":latest | awk '{print $1}')
     IP=$(docker inspect $ID | grep IPAddress | cut -d '"' -f 4)
     DOCKER_GATEWAY=$(docker inspect $ID | grep Gateway | awk '{ print $2 }' | tr -d ',"')
     PORT=$(docker port $ID $MEMCACHE_PORT | cut -d":" -f2)
@@ -98,7 +98,7 @@ case "$1" in
         dokku link:create "$APP" "$CONTAINER_NAME" "$LINK_NAME"
 
         # figure out IP to set env var
-        ID=$(docker ps -a | grep "$CONTAINER_NAME" |  awk '{print $1}')
+        ID=$(docker ps -a | grep "$CONTAINER_NAME":latest |  awk '{print $1}')
         IP=$(docker inspect $ID | grep IPAddress | cut -d '"' -f 4)
         DOCKER_GATEWAY=$(docker inspect $ID | grep Gateway | awk '{ print $2 }' | tr -d ',"')
         dokku config:set "$APP" MEMCACHE_SERVERS="${DOCKER_GATEWAY}:${MEMCACHE_PORT}"
@@ -107,7 +107,7 @@ case "$1" in
     ;;
 
   memcached:logs)
-    ID=$(docker ps -a | grep "$CONTAINER_NAME" |  awk '{print $1}')
+    ID=$(docker ps -a | grep "$CONTAINER_NAME":latest |  awk '{print $1}')
     docker logs $ID | tail -n 100
     ;;
 
