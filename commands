@@ -42,7 +42,7 @@ case "$1" in
     fi
     
     # Fork Memcached image
-    ID=$(docker run -d jazdez/memcached exit 0)
+    ID=$(docker run -d jezdez/memcached exit 0)
     docker wait $ID > /dev/null
     IMAGE=$(docker commit $ID)
     docker tag $IMAGE $CONTAINER_NAME
