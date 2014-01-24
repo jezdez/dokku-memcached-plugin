@@ -3,7 +3,7 @@
 # Version 0.1
 
 FROM ubuntu:quantal
-MAINTAINER Jannis Leidel "jannis@leidel.info"
+MAINTAINER jlachowski "jalachowski@gmail.com"
 
 ENV DEBIAN_FRONTEND noninteractive
 
