@@ -47,7 +47,7 @@ case "$1" in
     fi
 
     # Launch container
-    ID=$(docker run -name=$CONTAINER_NAME -d $CONTAINER_IMAGE \
+    ID=$(docker run --name $CONTAINER_NAME -d $CONTAINER_IMAGE \
         /usr/bin/memcached -u memcache -p $MEMCACHE_PORT -m 64 -l 0.0.0.0)
 
     # Link to a potential existing app
