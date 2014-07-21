@@ -1,8 +1,8 @@
 # Memcached Dokku plugin
 #
-# Version 0.1
+# Version 0.2
 
-FROM ubuntu:quantal
+FROM ubuntu:14.04
 MAINTAINER jlachowski "jalachowski@gmail.com"
 
 ENV DEBIAN_FRONTEND noninteractive
