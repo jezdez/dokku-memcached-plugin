@@ -1,8 +1,8 @@
 # Memcached Dokku plugin
 #
-# Version 0.1
+# Version 0.2
 
-FROM ubuntu:quantal
+FROM ubuntu:trusty
 MAINTAINER Jannis Leidel "jannis@leidel.info"
 
 ENV DEBIAN_FRONTEND noninteractive
