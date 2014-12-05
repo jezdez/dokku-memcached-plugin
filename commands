@@ -1,5 +1,5 @@
-#!/bin/bash
-set -e;
+#!/usr/bin/env bash
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
 # Check if name is specified
 if [[ $1 == memcached:* ]]; then
@@ -130,4 +130,7 @@ case "$1" in
 EOF
     ;;
 
+  *)
+    exit $DOKKU_NOT_IMPLEMENTED_EXIT
+    ;;
 esac
