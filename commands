@@ -24,7 +24,7 @@ if [[ $1 == memcached:* ]]; then
     PLUGIN_ALIAS="memcache"
     CONTAINER_NAME="${PLUGIN_NAME}_${APP}"
     HOST_DIR="$DOKKU_ROOT/.$PLUGIN_NAME/$APP"
-    CONTAINER_IMAGE="jlachowski/memcached"
+    CONTAINER_IMAGE="jezdez/memcached"
     MEMCACHE_PORT=11211
 fi
 
