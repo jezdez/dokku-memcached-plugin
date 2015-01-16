@@ -1,6 +1,6 @@
 # Memcached Dokku plugin
 #
-# Version 0.2
+# Version 0.3
 
 FROM ubuntu:trusty
 MAINTAINER Jannis Leidel "jannis@leidel.info"
