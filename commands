@@ -78,7 +78,7 @@ case "$1" in
     fi
 
     dokku link:delete "$APP" "$CONTAINER_NAME" "$PLUGIN_ALIAS"
-    dokku config:unset "$APP" MEMCACHE_SCHEME
+    dokku config:unset "$APP" MEMCACHE_SERVERS
     echo
     echo "-----> Deleted Memcached container $CONTAINER_NAME"
     ;;
@@ -108,7 +108,7 @@ case "$1" in
         #IP=$(docker inspect $ID | grep IPAddress | cut -d '"' -f 4)
 
         dokku link:create "$APP" "$CONTAINER_NAME" "$PLUGIN_ALIAS"
-        dokku config:set "$APP" MEMCACHE_SCHEME=""
+        dokku config:set "$APP" MEMCACHE_SERVERS="$PLUGIN_ALIAS:$MEMCACHE_PORT"
         echo
         echo "-----> $APP linked to $CONTAINER_NAME container"
     fi
