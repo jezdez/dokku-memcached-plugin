@@ -15,10 +15,6 @@ if [[ $1 == memcached:* ]]; then
             APP_EXISTS=false
         fi
     fi
-    if [[ ! -d "$PLUGIN_PATH/link" ]]; then
-        echo "Link plugin not found... Did you install it from https://github.com/rlaneve/dokku-link?"
-        exit 1
-    fi
 
     PLUGIN_NAME="memcached"
     PLUGIN_ALIAS="memcache"
@@ -77,7 +73,7 @@ case "$1" in
         docker rm $ID  > /dev/null
     fi
 
-    dokku link:delete "$APP" "$CONTAINER_NAME" "$PLUGIN_ALIAS"
+    dokku docker-options:remove "$APP" deploy,run "--link $CONTAINER_NAME:$PLUGIN_ALIAS"
     dokku config:unset "$APP" MEMCACHE_SCHEME
     echo
     echo "-----> Deleted Memcached container $CONTAINER_NAME"
@@ -107,7 +103,7 @@ case "$1" in
         ID=$(docker ps -a | grep "$CONTAINER_NAME" |  awk '{print $1}')
         #IP=$(docker inspect $ID | grep IPAddress | cut -d '"' -f 4)
 
-        dokku link:create "$APP" "$CONTAINER_NAME" "$PLUGIN_ALIAS"
+        dokku docker-options:add "$APP" deploy,run "--link $CONTAINER_NAME:$PLUGIN_ALIAS"
         dokku config:set "$APP" MEMCACHE_SCHEME=""
         echo
         echo "-----> $APP linked to $CONTAINER_NAME container"
