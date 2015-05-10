@@ -119,6 +119,20 @@ case "$1" in
     docker logs $ID | tail -n 100
     ;;
 
+  memcached:start)
+    ID=$(docker ps | grep "$CONTAINER_NAME" |  awk '{print $1}')
+    if [[ -n "$ID" ]]; then
+      echo "Memcached container already running with ID: $ID"
+      exit 1
+    fi
+    OLD_ID=$(docker ps -f status=exited | grep "$CONTAINER_NAME" | awk '{print $1}')
+    if [[ -n "$OLD_ID" ]]; then
+      echo "Restarting previously stopped Memcached container $OLD_ID"
+      docker start "$OLD_ID" > /dev/null
+      exit 0
+    fi
+    ;;
+
   help)
     cat && cat<<EOF
     memcached:create <app>                          Create a Memcached container
@@ -127,6 +141,7 @@ case "$1" in
     memcached:info <app>                            Display container informations
     memcached:link <app> <container>                Link an app to a Memcached container
     memcached:logs <app>                            Display last logs from Memcached container
+    memcached:start <app>                           Start a previously stopped Memcached container
 EOF
     ;;
 
